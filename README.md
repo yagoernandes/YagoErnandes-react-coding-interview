@@ -10,6 +10,12 @@ npm run dev
 yarn dev
 ```
 
+## Basic requirements
+
+- Your preferred IDE / Code Editor
+- NodeJS > 12
+- Your preferred browser (tested on Chrome and Firefox)
+
 ## Folder structure
 
 The components folder was designed usign Atomic design (atoms, molecules, organisms, templates). I also added some other folder that didn't fall under those categories: HOC (high order components, hooks and context). All the components under atoms, molecules, organisms and templates were designed in a way to not handle context-state or API logic in there (following Atomic Design principles and to make them flexible).
