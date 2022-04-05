@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, PageHeader, Descriptions, Input, message } from 'antd';
+import { Button, DatePicker, PageHeader, Descriptions, Input, message, Radio } from 'antd';
 
 import { withContextInitialized } from '../../components/hoc';
 import CompanyCard from '../../components/molecules/CompanyCard';
@@ -10,6 +10,7 @@ import { usePersonInformation } from '../../components/hooks/usePersonInformatio
 
 import { Company } from '../../constants/types';
 import { ResponsiveListCard } from '../../constants';
+import moment from 'moment';  
 
 const PersonDetail = () => {
   const router = useRouter();
@@ -17,10 +18,27 @@ const PersonDetail = () => {
     router.query?.email as string,
     true
   );
+  const [newData, setNewData] = useState({
+    name: '',
+    gender: '',
+    phone: '',
+    birthday: '',
+  })
+  
+    useEffect(() => {
+      load();
+    }, []);
 
-  useEffect(() => {
-    load();
-  }, []);
+  useEffect(()=>{
+    if(data){
+      setNewData({
+        name: data.name,
+        gender: data.gender,
+        phone: data.phone,
+        birthday: data.birthday,
+      })
+    }
+  }, [data])
 
   if (loading) {
     return <OverlaySpinner title={`Loading ${router.query?.email} information`} />;
@@ -31,6 +49,20 @@ const PersonDetail = () => {
       router.push('/home')
     );
     return <></>;
+  }
+
+  function onChangeFormData (varName){
+    return e => save({
+      ...data,
+      [varName]: e.target.value
+    })
+  }
+
+  function onChangeFormDate (varName){
+    return (date, dataString) => save({
+      ...data,
+      [varName]: date
+    })
   }
 
   return (
@@ -56,11 +88,23 @@ const PersonDetail = () => {
       >
         {data && (
           <Descriptions size="small" column={1}>
-            <Descriptions.Item label="Name">{data.name}</Descriptions.Item>
-            <Descriptions.Item label="Gender">{data.gender}</Descriptions.Item>
-            <Descriptions.Item label="Phone">{data.phone}</Descriptions.Item>
+            <Descriptions.Item label="Name">
+              <Input value={data.name} onChange={onChangeFormData('name')} /> 
+            </Descriptions.Item>
+            <Descriptions.Item label="Gender">
+            <Radio.Group onChange={onChangeFormData('gender')} value={data.gender}>
+              <Radio value={'male'}>Male</Radio>
+              <Radio value={'female'}>Female</Radio>
+              {/* <Radio value={'nonbinary'}>B</Radio> */}
+            </Radio.Group>
+            </Descriptions.Item>
+            <Descriptions.Item label="Phone">
+              <Input value={data.phone} onChange={onChangeFormData('phone')} />
+            </Descriptions.Item>
 
-            <Descriptions.Item label="Birthday">{data.birthday}</Descriptions.Item>
+            <Descriptions.Item label="Birthday">
+              <DatePicker onChange={onChangeFormDate('birthday')} value={moment(data.birthday, 'YYYY-MM-DD')} />
+            </Descriptions.Item>
           </Descriptions>
         )}
         <GenericList<Company>

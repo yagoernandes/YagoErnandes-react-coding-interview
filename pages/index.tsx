@@ -21,13 +21,14 @@ const Splash = () => {
 
   useEffect(() => {
     (async () => {
+      console.log({ DEFAULT_PAGE_SIZE })
       await execute(DEFAULT_PAGE_SIZE);
     })();
-  });
+  }, []);
 
   useEffect(() => {
     if (initializedPeopleInfo) router.push('/home');
-  }, []);
+  }, [ initializedPeopleInfo ]);
 
   return (
     <PageHeader
